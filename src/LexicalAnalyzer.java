@@ -156,8 +156,8 @@ public class LexicalAnalyzer {
 
                 try { //Identifying concatation of strings
 
-                    String leftLiteral = rhs.substring(0, rhs.indexOf('+')).trim();
-                    String rightLiteral = rhs.substring(rhs.indexOf("+") + 1).trim().trim();
+                    String leftLiteral = rhs.substring(0, rhs.indexOf('+'));
+                    String rightLiteral = rhs.substring(rhs.indexOf("+") + 1).trim();
 
                     variables.put(variable,leftLiteral + rightLiteral);
 
