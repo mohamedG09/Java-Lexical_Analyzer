@@ -1,5 +1,6 @@
 /*
 Right hand side of the assigments are of only two terms or one term not more;
+String as text it can take "Text", var + var, var;
 */
 
 import java.util.*;
@@ -47,7 +48,7 @@ public class LexicalAnalyzer {
         //Right hand side
         String rhs = x.substring(x.indexOf("=") + 1, x.indexOf(";")).trim();
 
-        if (datatype.equals("double")) {
+        if (datatype.equals("dotval")) {
 
             //Assigning a var=num or var=var
             if (!(rhs.contains("+") || rhs.contains("*") || rhs.contains("-") || rhs.contains("/"))) {
@@ -146,9 +147,32 @@ public class LexicalAnalyzer {
             }
 
         }
-        else if (datatype.equals("boolean")) {
+        else if (datatype.equals("text")) {
 
-        } else if (datatype.equals("string")) {
+            // var str = "Statement" analysis
+            if(rhs.charAt(0) == '"' && rhs.charAt(rhs.length() - 1) == '"'){
+                variables.put(variable,rhs);
+            } else {
+
+                try { //Identifying concatation of strings
+
+                    String leftLiteral = rhs.substring(0, rhs.indexOf('+')).trim();
+                    String rightLiteral = rhs.substring(rhs.indexOf("+") + 1).trim().trim();
+
+                    variables.put(variable,leftLiteral + rightLiteral);
+
+                } catch (IndexOutOfBoundsException e) {
+
+                    variables.put(variable,rhs);
+
+                }
+
+                catch(Exception e) {
+                    System.out.println("Undefined Text Value in {"+x+"}");
+                    System.exit(1);
+                }
+
+            }
 
         } else {
             System.out.println("Data type in {" + x + "} is not valid");
