@@ -2,8 +2,7 @@
 Right hand side of the assigments are of only two terms or one term not more;
 */
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 
 
 public class LexicalAnalyzer {
@@ -12,19 +11,33 @@ public class LexicalAnalyzer {
 
     public static void main(String[] args) {
 
-        String x = "String x = 5 + 10;";
-        String variable = x.substring(x.indexOf(" "), x.indexOf("=")).trim();
+        Scanner in = new Scanner(System.in);
 
-        String temp = x.substring(x.indexOf("=") + 1, x.indexOf(";")).trim();
+        System.out.println("Enter the code to be analyzed and enter exit when done: ");
+        ArrayList<String> list = new ArrayList<>();
 
-        System.out.println(temp.contains("+"));
-        String[] result = splitRHS(temp);
-        System.out.println(Arrays.toString(result));
+        while(true){
+
+            String line = in.nextLine();
+            if(line.equals("exit")) {
+                break;
+            }
+            list.add(line);
+        }
+
+        for(String x : list){
+            evaluateStatementTrue(x);
+        }
+
+        System.out.println("Values for all variables after some computation:");
+        for (Map.Entry<String, String> entry : variables.entrySet()) {
+            System.out.println(entry.getKey() + ":" + entry.getValue());
+        }
 
 
     }
 
-    public static boolean evaluateStatementTrue(String x) {
+    public static void evaluateStatementTrue(String x) {
 
         //Extracting left hand side
         String datatype = x.substring(0, x.indexOf(" "));    //Identifying the datatype
@@ -144,7 +157,7 @@ public class LexicalAnalyzer {
         }
 
 
-        return true;
+
     }
 
     public static String[] splitRHS(String rhs) {
@@ -208,5 +221,7 @@ public class LexicalAnalyzer {
 
 
     }
+
+
 
 }
