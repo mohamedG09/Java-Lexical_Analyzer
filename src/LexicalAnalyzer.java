@@ -16,6 +16,7 @@ public class LexicalAnalyzer {
 
     public static HashMap<String, String> variables = new HashMap<>();
 
+
     public static void main(String[] args) {
 
         Scanner in = new Scanner(System.in);
@@ -30,10 +31,11 @@ public class LexicalAnalyzer {
                 break;
             }
             list.add(line);
+
         }
 
-        for (String x : list) {
-            evaluateStatementTrue(x);
+        for(int i = 0; i < list.size();i++) {
+            evaluateStatementTrue(list.get(i));
         }
 
         System.out.println("Values for all variables after some computation:");
@@ -47,13 +49,41 @@ public class LexicalAnalyzer {
     public static void evaluateStatementTrue(String x) {
 
         //Extracting left hand side
-        String datatype = x.substring(0, x.indexOf(" "));    //Identifying the datatype
-        String variable = x.substring(x.indexOf(" "), x.indexOf("=")).trim(); //Identifying the variable
-        String eq = x.substring(x.indexOf(variable) + 1, x.indexOf("=") + 1).trim(); //Identifying equal sign
+        String datatype;    //Identifying the datatype
+        String variable; //Identifying the variable
 
         //Right hand side
-        String rhs = x.substring(x.indexOf("=") + 1, x.indexOf(";")).trim();
+        String rhs;
 
+        //Incase we have a loop
+        String keyword = null;
+        String condition = null;
+
+        try { //Assigment Statement
+
+            datatype = x.substring(0, x.indexOf(" "));    //Identifying the datatype
+            variable = x.substring(x.indexOf(" "), x.indexOf("=")).trim(); //Identifying the variable
+            rhs = x.substring(x.indexOf("=") + 1, x.indexOf(";")).trim();
+
+        } catch(IndexOutOfBoundsException e) {
+            //It is either a loop or a switch
+            rhs = "Unknown";
+            datatype = "Unknown";
+            variable = "Unknown";
+
+            //Checking if we have loop
+            try{
+                keyword = x.substring(0,x.indexOf("(")).trim();
+                condition = x.substring(x.indexOf("(") +1,x.length()-1).trim();
+            }
+            catch (IndexOutOfBoundsException e2){
+                System.out.println("Can not Identify keyword");
+                System.exit(1);
+            }
+
+
+
+        }
         if (datatype.equals("dotval")) {
 
             //Assigning a var=num or var=var
@@ -149,7 +179,6 @@ public class LexicalAnalyzer {
                     }
                 }
 
-
             }
 
         } else if (datatype.equals("text")) {
@@ -177,11 +206,23 @@ public class LexicalAnalyzer {
 
             }
 
-        } else {
+        }
+
+        else if(datatype.equals("flag")) {
+
+            boolean temp = splitBoolExp(rhs);
+            variables.put(variable,temp+"");
+
+
+        }
+
+
+        else {
             System.out.println("Data type in {" + x + "} is not valid");
             System.out.println("Terminating");
             System.exit(1);
         }
+
 
 
     }
@@ -254,23 +295,29 @@ public class LexicalAnalyzer {
         //var == var
         try {
             String leftLiteral = boolExp.substring(0, boolExp.indexOf("=")).trim();
-            String rightLiteral = boolExp.substring(boolExp.lastIndexOf("="),boolExp.length() - 1);
+            String rightLiteral = boolExp.substring(boolExp.lastIndexOf("=")+1).trim();
+
 
             return variables.get(leftLiteral).equals(variables.get(rightLiteral));
 
-        } catch (IndexOutOfBoundsException e){
+        } catch (NullPointerException e){
             //var != var
-            String leftLiteral = boolExp.substring(0, boolExp.indexOf("!")).trim();
-            String rightLiteral = boolExp.substring(boolExp.lastIndexOf("="),boolExp.length() - 1);
+            String leftLiteral = boolExp.substring(0, boolExp.indexOf("!")-1).trim();
+            String rightLiteral = boolExp.substring(boolExp.lastIndexOf("=")+1).trim();
 
             return !(variables.get(leftLiteral).equals(variables.get(rightLiteral)));
-        } catch(Exception e){
+        }
+        catch(Exception e){
             System.out.println("Expression {"+boolExp+"} can not be evaluated");
+            System.out.println(e.getMessage());
             System.exit(1);
             return false;
         }
 
     }
+
+
+
 
 
 }
