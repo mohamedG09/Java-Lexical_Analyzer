@@ -96,7 +96,6 @@ public class LexicalAnalyzer {
 
     public static void evaluateStatementTrue(String x) {
 
-
         //Extracting left hand side
         String datatype = x.substring(0, x.indexOf(" "));     //Identifying the datatype
         String variable = x.substring(x.indexOf(" "), x.indexOf("=")).trim(); //Identifying the variable
@@ -116,7 +115,7 @@ public class LexicalAnalyzer {
                 } catch (NumberFormatException e) { //Incase it is another variable
 
                     if (variables.containsKey(rhs)) {
-                        variables.put(variable, rhs);
+                        variables.put(variable, variables.get(rhs));
                     } else {
                         System.out.println("Variable is not declared in {" + x + "}");
                         System.exit(1);
@@ -211,14 +210,19 @@ public class LexicalAnalyzer {
 
                 try { //Identifying concatation of strings
 
-                    String leftLiteral = rhs.substring(0, rhs.indexOf('+'));
+                    String leftLiteral = rhs.substring(0, rhs.indexOf('+')).trim();
                     String rightLiteral = rhs.substring(rhs.indexOf("+") + 1).trim();
 
-                    variables.put(variable, leftLiteral + rightLiteral);
+                    //Obtaining variables from hashmap
+                    String l1 = variables.get(leftLiteral);
+                    String l2 = variables.get(rightLiteral);
+
+
+                    variables.put(variable, l1 + l2);
 
                 } catch (IndexOutOfBoundsException e) {
 
-                    variables.put(variable, rhs);
+                    variables.put(variable, variables.get(rhs));
 
                 } catch (Exception e) {
                     System.out.println("Undefined Text Value in {" + x + "}");
