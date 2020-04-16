@@ -192,7 +192,8 @@ public class LexicalAnalyzer {
                     }
                     case "-": {
 
-                        double temp = leftLiteral_double - rightLiteral_double;
+                        //Intetionally Switched right and left literals
+                        double temp = rightLiteral_double - leftLiteral_double;
                         variables.put(variable, temp + "");
 
                         break;
