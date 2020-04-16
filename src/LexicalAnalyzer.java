@@ -3,7 +3,13 @@ Right hand side of the assigments are of only two terms or one term not more;
 String as text it can take "Text", var + var, var;
 */
 
-import java.util.*;
+//TODO While() loop implementation
+//TODO switch(),case,break statement
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 
 public class LexicalAnalyzer {
@@ -17,16 +23,16 @@ public class LexicalAnalyzer {
         System.out.println("Enter the code to be analyzed and enter exit when done: ");
         ArrayList<String> list = new ArrayList<>();
 
-        while(true){
+        while (true) {
 
             String line = in.nextLine();
-            if(line.equals("exit")) {
+            if (line.equals("exit")) {
                 break;
             }
             list.add(line);
         }
 
-        for(String x : list){
+        for (String x : list) {
             evaluateStatementTrue(x);
         }
 
@@ -146,12 +152,11 @@ public class LexicalAnalyzer {
 
             }
 
-        }
-        else if (datatype.equals("text")) {
+        } else if (datatype.equals("text")) {
 
             // var str = "Statement" analysis
-            if(rhs.charAt(0) == '"' && rhs.charAt(rhs.length() - 1) == '"'){
-                variables.put(variable,rhs);
+            if (rhs.charAt(0) == '"' && rhs.charAt(rhs.length() - 1) == '"') {
+                variables.put(variable, rhs);
             } else {
 
                 try { //Identifying concatation of strings
@@ -159,16 +164,14 @@ public class LexicalAnalyzer {
                     String leftLiteral = rhs.substring(0, rhs.indexOf('+'));
                     String rightLiteral = rhs.substring(rhs.indexOf("+") + 1).trim();
 
-                    variables.put(variable,leftLiteral + rightLiteral);
+                    variables.put(variable, leftLiteral + rightLiteral);
 
                 } catch (IndexOutOfBoundsException e) {
 
-                    variables.put(variable,rhs);
+                    variables.put(variable, rhs);
 
-                }
-
-                catch(Exception e) {
-                    System.out.println("Undefined Text Value in {"+x+"}");
+                } catch (Exception e) {
+                    System.out.println("Undefined Text Value in {" + x + "}");
                     System.exit(1);
                 }
 
@@ -179,7 +182,6 @@ public class LexicalAnalyzer {
             System.out.println("Terminating");
             System.exit(1);
         }
-
 
 
     }
@@ -246,6 +248,29 @@ public class LexicalAnalyzer {
 
     }
 
+    //it supports == or !=
+    public static boolean splitBoolExp (String boolExp) {
+
+        //var == var
+        try {
+            String leftLiteral = boolExp.substring(0, boolExp.indexOf("=")).trim();
+            String rightLiteral = boolExp.substring(boolExp.lastIndexOf("="),boolExp.length() - 1);
+
+            return variables.get(leftLiteral).equals(variables.get(rightLiteral));
+
+        } catch (IndexOutOfBoundsException e){
+            //var != var
+            String leftLiteral = boolExp.substring(0, boolExp.indexOf("!")).trim();
+            String rightLiteral = boolExp.substring(boolExp.lastIndexOf("="),boolExp.length() - 1);
+
+            return !(variables.get(leftLiteral).equals(variables.get(rightLiteral)));
+        } catch(Exception e){
+            System.out.println("Expression {"+boolExp+"} can not be evaluated");
+            System.exit(1);
+            return false;
+        }
+
+    }
 
 
 }
